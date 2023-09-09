@@ -1,61 +1,83 @@
-import uvicorn
-from fastapi import FastAPI, APIRouter, Query, HTTPException, Request, Depends
-from fastapi.templating import Jinja2Templates
+from langchain.llms import OpenAI
+from agents import Agent, classification_agent
+from indexer import BuildRagIndex, index_to_product_mapping, product_descriptions
 
-from typing import Optional, Any
-from pathlib import Path
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-from app import schemas, models
-from app import deps
-from app import crud
-import functionality
-from functionality.conversation import UnitConversationManager
+import logging
 
-# Project directories
-ROOT = Path(__file__).resolve().parent.parent
-BASE_PATH = Path(__file__).resolve().parent
-# TEMPLATES = Jinja2Templates()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler("query.log", mode="a")
+fh.setLevel(logging.INFO)
+logger.addHandler(fh)
+
+
+class Query(BaseModel):
+    query: str
+
+
+class Response(BaseModel):
+    response: str
+    product: str
+    sources: str
+
 
 app = FastAPI()
 
-api_router = APIRouter()
+
+query = "What are the most important maintenance steps I need to do within one year?"
+query = "Something is wrong with the scanner. What should I do?"
 
 
-@api_router.get("/", status_code=200)
-def root(request: Request, db: Session = Depends(deps.get_db)) -> dict:
-    return {"HWE": "I seem to be working correctly"}
+@app.get("/converse/")
+def get_response(query: Query) -> dict:
+    logger.info(query.query)
+    # response query initialize
+    response_query = []
+    # find the appropriate index for the product
+    product_that_query_is_about = classification_agent(query.query)
+    product_that_query_is_about = product_that_query_is_about.strip()
 
+    print(f"product_that_query_is_about: {product_that_query_is_about}")
+    # appropriate rag index
+    try:
+        index_id = index_to_product_mapping[product_that_query_is_about]
+        msg1 = f"You seem to be asking about {product_that_query_is_about}."
+    except KeyError:
+        msg1 = f"Sorry, I cannot seem to find the product you are asking about in my database."
+        msg2 = f"I only have the following products in my database: {list(index_to_product_mapping.keys())}"
+        msg3 = f"Please try again. It may help to give any identifying infromation about the product for my lookup benefit."
+        response_query.extend([msg1, msg2, msg3])
+        response_obj = {
+            "response": "\n\n".join(response_query),
+            "product": None,
+            "sources": None,
+        }
+        logger.info(response_obj)
+        logger.info(f"\n {'-'*30}\n")
+        return response_obj
+        ...
 
-@api_router.get("/converse-website/", status_code=200, response_model=schemas.Message)
-async def converse_with_website(
-    query_input: schemas.QueryApiInputBaseClass, db: Session = Depends(deps.get_db)
-) -> schemas.Message:
-    conv_manager = UnitConversationManager()
-    return conv_manager(query_input=query_input)
+    b = BuildRagIndex(index_id)
+    response_text, page_numbers = b.query(query.query)
+    response_query.append(msg1)
+    response_query.append(response_text)
+    response_obj = {
+        "response": "\n\n".join(response_query),
+        "product": product_that_query_is_about,
+        "sources": ", ".join(page_numbers),
+    }
+    logger.info(response_obj)
+    logger.info(f"\n {'-'*30}\n")
+    return response_obj
 
-
-@api_router.get("/converse/", status_code=200, response_model=schemas.Message)
-async def converse(
-    input_msg: schemas.MessageCreate, db: Session = Depends(deps.get_db)
-) -> schemas.Message:
-    # add message to database
-    msg_human = crud.message.create(db=db, obj_in=input_msg)
-    # get response
-    agent_response_str = functionality.converser(msg_human)
-    # add response to database
-    msg_agent = schemas.MessageCreate(
-        conv_id=msg_human.conv_id,
-        content=agent_response_str,
-        sender="agent",
-        receiver="human",
-    )
-    agent_response = crud.message.create(db=db, obj_in=msg_agent)
-    # return response
-    return agent_response
-
-
-app.include_router(api_router)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app")
+    import uvicorn
+
+    uvicorn.run(app, port=8000)
+    # while True:
+    #     query = input("Enter query: ")
+    #     print(get_response(Query(query=query)))
