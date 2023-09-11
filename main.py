@@ -15,14 +15,14 @@ logger.addHandler(fh)
 
 
 class Message(BaseModel):
-    content: str = Field(description="Query to be answered")
+    content: str
     # role: str = Field(description="agent | human (role of the actor sending the message)")
 
 
 class Response(BaseModel):
     response: str
-    product: str
-    sources: str
+    product: str | None
+    sources: str | None
 
 
 app = FastAPI()
@@ -38,7 +38,7 @@ memory_conv_id = 0
 @app.get("/converse/")
 def get_response(
     message: Message,
-) -> dict:
+) -> Response:
     memory: Message | None = None
 
     logger.info(message.content)
@@ -49,9 +49,11 @@ def get_response(
         return get_classification(message)
         ...
     elif memory.content.lower() in ["", "y", "yes"]:
+        # switch the message so as to reset the memory for the next call
+        past_memory = memory.deepcopy()
+        memory = None
         # perform the rag call
-        return perform_rag_call(message)
-        ...
+        return perform_rag_call(past_memory)
 
 
 class ConversationHandler:
@@ -59,7 +61,7 @@ class ConversationHandler:
         self.memory: Message | None = None
 
 
-def get_classification(message: Message) -> dict:
+def get_classification(message: Message) -> Response:
     product_that_query_is_about = classification_agent(message.content)
     product_that_query_is_about = product_that_query_is_about.strip()
 
@@ -78,7 +80,7 @@ def get_classification(message: Message) -> dict:
         return Response(response=msg1, product=None, sources=None)
 
 
-def perform_rag_call(message: Message) -> dict:
+def perform_rag_call(message: Message) -> Response:
     # response query initialize
     response_query = []
     # find the appropriate index for the product
