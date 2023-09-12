@@ -11,3 +11,9 @@ give me contact details
 
  ------------------------------
 
+how do i recalibrate my senser?
+
+{'content': 'Product: Primescan Connect.\n\n\n\nResponse 1: To recalibrate your sensor, follow these steps:\n\n1. In the software, navigate to the system menu and click on the "Configuration" button.\n2. Click on the "Devices" button.\n3. Click on the "Primescan" button.\n4. Click on the "Calibrate" button.\n5. The scanner view will be displayed in one window.\n6. Mount the bottom side of the calibration set to the tip of the scanner.\n7. Click on the "OK" button to continue the calibration process.\n8. Once the calibration is complete, a message will be displayed indicating this.\n9. Confirm the message by clicking the "OK" button.\n10. The Primescan scanner is now recalibrated.\n\nPlease note that it is recommended to recalibrate the scanner after every re-installation and after each time it is transported. Additionally, if there are errors in the acquisition process or if the scanner has been exposed to vibration loads, it is advisable to perform a calibration.', 'product': 'Primescan Connect', 'sources': '64, 65, 66, 67, 68'}
+
+ ------------------------------
+

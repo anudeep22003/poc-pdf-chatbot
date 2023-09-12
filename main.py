@@ -157,12 +157,12 @@ class ConversationHandler:
 
 
 if __name__ == "__main__":
-    # import uvicorn
-    # uvicorn.run(app, port=8000)
+    import uvicorn
+    uvicorn.run(app, port=8001)
 
     # for doc_location, start_skip, end_skip in documents_to_index:
     #     BuildRagIndex(doc_location, start_skip, end_skip)
-    while True:
-        query = input("Enter query: ")
-        message = Message(content=query)
-        print(get_response(message))
+    # while True:
+    #     query = input("Enter query: ")
+    #     message = Message(content=query)
+    #     print(get_response(message))

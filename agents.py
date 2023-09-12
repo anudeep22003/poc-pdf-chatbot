@@ -4,6 +4,7 @@ from indexer import product_descriptions
 llm = OpenAI()
 
 
+
 class Agent:
     """Agent that performs an atomic action
     Inputs:

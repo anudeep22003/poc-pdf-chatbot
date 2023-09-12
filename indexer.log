@@ -25,3 +25,26 @@ response from query: To change the filter bag and HEPA filter on your device, fo
 Make sure not to jam the filter bag and ensure that the cap is sealed properly.
 
 sources: {'64', '63'}
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect.pdf
+index exists on filesystem: True
+querying rag index for --> how do i recalibrate my senser?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('65', 0.8289508198898837), ('64', 0.8157285216983207), ('66', 0.8150933661585498), ('68', 0.8071212631672163), ('67', 0.7907417167931015), ('69', 0.7838439101447827), ('38', 0.7746585687557117), ('37', 0.7683123026063629), ('36', 0.7676723061617813), ('32', 0.765615566231349)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('65', 0.8289508198898837), ('64', 0.8157285216983207), ('66', 0.8150933661585498), ('68', 0.8071212631672163), ('67', 0.7907417167931015), ('69', 0.7838439101447827), ('38', 0.7746585687557117), ('37', 0.7683123026063629), ('36', 0.7676723061617813), ('32', 0.765615566231349)]
+response from query: Response 1: To recalibrate your sensor, follow these steps:
+
+1. In the software, navigate to the system menu and click on the "Configuration" button.
+2. Click on the "Devices" button.
+3. Click on the "Primescan" button.
+4. Click on the "Calibrate" button.
+5. The scanner view will be displayed in one window.
+6. Mount the bottom side of the calibration set to the tip of the scanner.
+7. Click on the "OK" button to continue the calibration process.
+8. Once the calibration is complete, a message will be displayed indicating this.
+9. Confirm the message by clicking the "OK" button.
+10. The Primescan scanner is now recalibrated.
+
+Please note that it is recommended to recalibrate the scanner after every re-installation and after each time it is transported. Additionally, if there are errors in the acquisition process or if the scanner has been exposed to vibration loads, it is advisable to perform a calibration.
+
+sources: [64, 65, 66, 67, 68]
