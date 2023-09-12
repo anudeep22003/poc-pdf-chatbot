@@ -17,3 +17,15 @@ how do i recalibrate my senser?
 
  ------------------------------
 
+{'content': 'Product: Primescan Connect.\n\n\n\nResponse 1: To recalibrate your scanner, follow these steps:\n\n1. In the software, navigate to the system menu and click on the "Configuration" button.\n2. Click on the "Devices" button.\n3. Click on the "Primescan" button.\n4. Click on the "Calibrate" button.\n5. The scanner view will be displayed in one window.\n6. Confirm any changes and click the "Ok" button.\n7. Follow the prompts to complete the calibration process.\n8. Once the calibration is complete, the software will indicate that it was successful.\n9. Click the "Ok" button to finish the calibration.\n\nRemember to recalibrate the scanner after every re-installation, after each time it is transported, or in the event of errors in the acquisition process.', 'product': 'Primescan Connect', 'sources': '64, 65, 66, 67, 68'}
+
+ ------------------------------
+
+{'content': 'Product: IFU Primescan Connect DE.\n\n\n\nResponse 1: Um einen okklusalen Scan durchzuführen, positionieren Sie den Scanner in der Startposition auf dem Zahn, der in distaler Richtung zum präparierten Zahn am nächsten liegt. Scannen Sie dann in mesialer Richtung, indem Sie den Scanner okklusal vom distal gelegenen Zahn über den präparierten Zahn zum mesial liegenden Zahn bewegen.', 'product': 'IFU Primescan Connect DE', 'sources': '39, 40, 42, 44, 45'}
+
+ ------------------------------
+
+{'content': 'Product: IFU Primescan Connect DE.\n\n\n\nUm einen okklusalen Scan durchzuführen, scannen Sie den Zahn, der in distaler Richtung zum präparierten Zahn am nächsten liegt, in mesialer Richtung. Achten Sie darauf, dass der Scanner nicht auf den Zähnen oder auf dem Zahnfleisch aufliegt und dass der Abstand der beschichteten Saphirscheibe des Scanners zur vermessenen Oberfläche zwischen 0-20 mm liegt, wobei 2 mm optimal sind.', 'product': 'IFU Primescan Connect DE', 'sources': '39, 40, 42, 44, 45'}
+
+ ------------------------------
+

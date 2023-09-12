@@ -48,3 +48,45 @@ response from query: Response 1: To recalibrate your sensor, follow these steps:
 Please note that it is recommended to recalibrate the scanner after every re-installation and after each time it is transported. Additionally, if there are errors in the acquisition process or if the scanner has been exposed to vibration loads, it is advisable to perform a calibration.
 
 sources: [64, 65, 66, 67, 68]
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect.pdf
+index exists on filesystem: True
+querying rag index for --> How do I recalibrate my scanner?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('65', 0.8791624363244789), ('66', 0.8719698215122795), ('64', 0.8655261634730927), ('68', 0.8606451380380862), ('67', 0.8323725250543289), ('45', 0.8302981791016433), ('38', 0.8219959328917381), ('37', 0.8196572713082992), ('32', 0.815530935024739), ('36', 0.8142380606755905)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('65', 0.8791624363244789), ('66', 0.8719698215122795), ('64', 0.8655261634730927), ('68', 0.8606451380380862), ('67', 0.8323725250543289), ('45', 0.8302981791016433), ('38', 0.8219959328917381), ('37', 0.8196572713082992), ('32', 0.815530935024739), ('36', 0.8142380606755905)]
+response from query: Response 1: To recalibrate your scanner, follow these steps:
+
+1. In the software, navigate to the system menu and click on the "Configuration" button.
+2. Click on the "Devices" button.
+3. Click on the "Primescan" button.
+4. Click on the "Calibrate" button.
+5. The scanner view will be displayed in one window.
+6. Confirm any changes and click the "Ok" button.
+7. Follow the prompts to complete the calibration process.
+8. Once the calibration is complete, the software will indicate that it was successful.
+9. Click the "Ok" button to finish the calibration.
+
+Remember to recalibrate the scanner after every re-installation, after each time it is transported, or in the event of errors in the acquisition process.
+
+sources: [64, 65, 66, 67, 68]
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect_DE.pdf
+index exists on filesystem: True
+querying rag index for --> So führen Sie einen okklusalen Scan durch?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('44', 0.8238239012654679), ('45', 0.8209984902582345), ('40', 0.8147592732539969), ('39', 0.8143059631001286), ('42', 0.8104885877410081), ('66', 0.8092097639195344), ('67', 0.8087176323426499), ('41', 0.8080622197878402), ('43', 0.8074339042256191), ('37', 0.8074146815845906)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('44', 0.8238239012654679), ('45', 0.8209984902582345), ('40', 0.8147592732539969), ('39', 0.8143059631001286), ('42', 0.8104885877410081), ('66', 0.8092097639195344), ('67', 0.8087176323426499), ('41', 0.8080622197878402), ('43', 0.8074339042256191), ('37', 0.8074146815845906)]
+response from query: Response 1: Um einen okklusalen Scan durchzuführen, positionieren Sie den Scanner in der Startposition auf dem Zahn, der in distaler Richtung zum präparierten Zahn am nächsten liegt. Scannen Sie dann in mesialer Richtung, indem Sie den Scanner okklusal vom distal gelegenen Zahn über den präparierten Zahn zum mesial liegenden Zahn bewegen.
+
+sources: [39, 40, 42, 44, 45]
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect_DE.pdf
+index exists on filesystem: True
+querying rag index for --> So führen Sie einen okklusalen Scan durch?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('44', 0.8239039543776824), ('45', 0.821056306422453), ('40', 0.8148431244047148), ('39', 0.8143935776549172), ('42', 0.81053679103974), ('66', 0.8093111842043094), ('67', 0.8088167468727514), ('41', 0.8081254063045559), ('37', 0.8075157266849817), ('43', 0.8074835778680068)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('44', 0.8239039543776824), ('45', 0.821056306422453), ('40', 0.8148431244047148), ('39', 0.8143935776549172), ('42', 0.81053679103974), ('66', 0.8093111842043094), ('67', 0.8088167468727514), ('41', 0.8081254063045559), ('37', 0.8075157266849817), ('43', 0.8074835778680068)]
+response from query: Um einen okklusalen Scan durchzuführen, scannen Sie den Zahn, der in distaler Richtung zum präparierten Zahn am nächsten liegt, in mesialer Richtung. Achten Sie darauf, dass der Scanner nicht auf den Zähnen oder auf dem Zahnfleisch aufliegt und dass der Abstand der beschichteten Saphirscheibe des Scanners zur vermessenen Oberfläche zwischen 0-20 mm liegt, wobei 2 mm optimal sind.
+
+sources: [39, 40, 42, 44, 45]

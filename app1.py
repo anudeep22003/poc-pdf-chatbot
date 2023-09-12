@@ -95,7 +95,7 @@ def get_classification(message: Message) -> Response:
         return Response(content=f"{msg1}{msg2}{msg3}", product=None, sources=None)
 
 
-def perform_rag_call(message: Message) -> Response:
+def perform_rag_call(message: Message):
     # response query initialize
     response_query = []
     # find the appropriate index for the product
@@ -119,7 +119,7 @@ def perform_rag_call(message: Message) -> Response:
         }
         logger.info(response_obj)
         logger.info(f"\n {'-'*30}\n")
-        return Response(**response_obj)
+        return response_obj
 
     b = BuildRagIndex(index_id)
     response_text, page_numbers = b.query(message.content)
@@ -134,7 +134,7 @@ def perform_rag_call(message: Message) -> Response:
     }
     logger.info(response_obj)
     logger.info(f"\n {'-'*30}\n")
-    return Response(**response_obj)
+    return response_obj
 
 
 class Dict2Class(object):
@@ -146,16 +146,18 @@ class Dict2Class(object):
 
 
 @app.route('/chat', methods=['POST', 'OPTIONS'])
-def get_response() -> dict:
+def get_response() -> Response:
     if request.method == "OPTIONS": # CORS preflight
         return _build_cors_preflight_response()
     else:
         print("Hello")
-        #postData = json.loads(request.data)
-        message = Message(**json.loads(request.data))
-#       print(postData)
+        postData = json.loads(request.data)
+        print(postData)
+        message = Message(content=postData["content"])
+        print(message)
 #       message = Dict2Class(postData)
         memory = memory_getter()
+        print(memory)
 
         if memory is None:
             print("memory is None, hence doing classification")
@@ -163,21 +165,25 @@ def get_response() -> dict:
             # send a classification response
             memory_writer(message)
             response_msg = get_classification(message)
+            respObj = {"content":response_msg.content}
             if "sorry" in response_msg.content.lower():
                 memory_refresher()
-                return response_msg
-            return response_msg
+                return respObj
+            return respObj
         elif message.content.lower() in ["n", "no"]:
-            return Response(
-                content="Sorry for getting it wrong, request you to try asking your question again.\n\n",
-                product=None,
-                sources=None,
-            )
+            return {
+                "content":"Sorry for getting it wrong, request you to try asking your question again.\n\n",
+                "product":None,
+                "sources":None,
+            }
         elif message.content.lower() in ["", "y", "yes"]:
             # switch the message so as to reset the memory for the next call
             memory_refresher()
             # perform the rag call
             return perform_rag_call(memory)
+        else:
+            print("NO option")
+            return {"Status":"Failed"}
 
 
 class ConversationHandler:
