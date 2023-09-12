@@ -37,7 +37,7 @@ llm = OpenAI()
 classification_agent = Agent(
     purpose="Classify the user query into a product",
     evidence_to_aid_purpose="""
-    Restrict your classifications to one of the following products only: "Primescan Connect", "CEREC Primemill", "CEREC SW 5", "None"
+    Restrict your classifications to one of the following products only: "Primescan Connect", "CEREC Primemill", "CEREC SW 5", "IFU Primescan Connect DE", "None"
 
     Here are descriptions of each product to help with your classification:
     {product_descriptions}
@@ -53,14 +53,20 @@ classification_agent = Agent(
     Query 3: How do I change the filter bag and HEPA filter on my device?
     Product 3: CEREC Primemill
     ###
-    Query 4: My Primemill and PSC cannot be added to the software. How do I add these devices?
+    Query 4: How do I add new devices to my software?
     Product 4: CEREC SW 5
     ###
     Query 5: How do I change the bedding on my mattress?
     Product 5: None
     ###
-    Query 6: {query}
-    Product 5:
+    Query 6: So führen Sie einen okklusalen Scan durch?
+    Product 6: IFU Primescan Connect DE
+    ###
+    Query 7: Quadranten- und Vollkiefer-Scan?
+    Product 7: IFU Primescan Connect DE
+    ###
+    Query 8: {query}
+    Product 8:
 
     """,
 )

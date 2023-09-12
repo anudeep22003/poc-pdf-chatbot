@@ -4,6 +4,7 @@ from llama_index import (
     get_response_synthesizer,
     StorageContext,
     load_index_from_storage,
+    SummaryIndex,
 )
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.node_parser import SimpleNodeParser
@@ -14,15 +15,24 @@ from llama_index.schema import Node
 import unstructured
 from unstructured.partition.auto import partition
 
+from prompts import text_qa_template
+
 import os
 from collections import defaultdict
 from itertools import chain
+from collections import Counter
+import json
 import logging
 
 
 SIMILARITY_TOP_K = 5
 PATH_RAG_INDEX = "data/rag-index/"
 PATH_TO_DATA = "data/"
+
+# HYPER PARAMS
+THRESHOLD_INFORMATION_VALUE: int = 20
+TEXT_IN_DOCUMENT_LOWER_BOUND: int = 2
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -36,20 +46,29 @@ product_descriptions = {
     "CEREC SW 5": """
     The CEREC SW 5 software is used to create optical impressions of dentulous, partially edentulous or completely edentulous jaw situations. Digital models of the jaw situations are created in CEREC SW 5 based on the optical impressions. The designs can be exported for preparation from dental materials.
     """,
+    "IFU Primescan Connect DE": "Primescan Connect ermöglicht Ihnen auch die Versendung digitaler Aufnahmen an ein Labor Ihrer Wahl für eine Herstellung bei Ihrem Laborpartner.",
 }
 
 index_to_product_mapping = {
     "CEREC Primemill": "IFU_CEREC_Primemill.pdf",
     "Primescan Connect": "IFU_Primescan_Connect.pdf",
     "CEREC SW 5": "OM_CEREC_SW_5.pdf",
+    "IFU Primescan Connect DE": "IFU_Primescan_Connect_DE.pdf",
 }
 
 
 class BuildRagIndex:
-    def __init__(self, doc_filename: str, start_skip: int = 0, end_skip: int = 0):
+    def __init__(
+        self,
+        doc_filename: str,
+        start_skip: int = 0,
+        end_skip: int = 0,
+    ):
         self.doc_filename = doc_filename  # IFU_CEREC_Primemill_EN_6719681.pdf
         self.start_skip = start_skip
         self.end_skip = end_skip
+        self.text_in_document_lower_bound = TEXT_IN_DOCUMENT_LOWER_BOUND
+        self.threshold_information_value = THRESHOLD_INFORMATION_VALUE
         self.rag_index = self.build_or_retrieve_index()
         pass
 
@@ -98,6 +117,9 @@ class BuildRagIndex:
         Output:
         - a dict of {page_number: text}
         """
+        # to keep track of text frequency to do use information entropy on
+        textrank = Counter()
+
         document_location = os.path.join(os.getcwd(), PATH_TO_DATA, self.doc_filename)
         logger.debug(
             f"document to be indexed checked for at location: {document_location}"
@@ -106,8 +128,45 @@ class BuildRagIndex:
         elements = partition(filename=document_location)
         paged_text_list = defaultdict(list)
         logger.debug(f"paged_text_list {list(paged_text_list.items())[25:35]}")
+
+        # first build textrank
         for el in elements:
-            paged_text_list[el.metadata.page_number].append(el.text)
+            textrank.update([el.text])
+
+        # now add the relevant text that is below threshold information entropy value
+        for el in elements:
+            frequency_of_text = textrank[el.text]
+            if frequency_of_text < self.threshold_information_value:
+                paged_text_list[el.metadata.page_number].append(el.text)
+            else:
+                logger.debug(f"frequency: {frequency_of_text} skipped text: {el.text}")
+
+        ########### Text analytics for logging
+        old_size = len(elements)
+        new_size = sum([len(textlist) for textlist in paged_text_list.values()])
+
+        logger.debug(
+            f"""prev element list size: {old_size}\n
+            new size after entropy maximizing: {new_size}
+            reduction: {((old_size - new_size)/old_size):2%}"""
+        )
+        ######################################
+
+        skipped_pages_due_to_low_information = {
+            pagenum: textlist
+            for pagenum, textlist in paged_text_list.items()
+            if len(textlist) < self.text_in_document_lower_bound
+        }
+
+        # log all the text that was skipped
+        with open("skipped_pages.json", "a") as f:
+            f.write(json.dumps(skipped_pages_due_to_low_information))
+
+        ########### Text analytics for logging
+        logger.debug(
+            f"Number of pages with < {self.text_in_document_lower_bound} text blocks: {len(skipped_pages_due_to_low_information)} "
+        )
+        ######################################
 
         length_of_paged_text_list = len(paged_text_list)
         skipped_pages = list(
@@ -124,6 +183,7 @@ class BuildRagIndex:
             pagenumber: "\n".join(textlist)
             for pagenumber, textlist in paged_text_list.items()
             if pagenumber not in skipped_pages
+            and pagenumber not in skipped_pages_due_to_low_information.keys()
         }
 
         logger.debug(f"paged_text: {list(paged_text.items())[25:35]}")
@@ -165,11 +225,13 @@ class BuildRagIndex:
     def query(self, query_text: str):
         response = self.query_rag_index(query_text)
         response_text = str(response)
-        sources = set(
-            [
-                node_with_score.node.ref_doc_id
-                for node_with_score in response.source_nodes
-            ]
+        sources = list(
+            set(
+                [
+                    int(node_with_score.node.ref_doc_id)
+                    for node_with_score in response.source_nodes
+                ]
+            )
         )
         logger.debug(f"response from query: {response_text}\n\nsources: {sources}")
         return response_text, sources
@@ -184,7 +246,7 @@ class BuildRagIndex:
             # filters=keyword_filters,
         )
 
-        # level 1 retreival
+        # ------- level 1 retreival
         retrieved_nodes = retriever.retrieve(query_text)
         logger.debug(
             f"number of retrieved_nodes after 1st retreival: {len(retrieved_nodes)}"
@@ -198,33 +260,44 @@ class BuildRagIndex:
 
         # print(retrieved_nodes[:2])
         logger.debug(f"page_nums: {get_pages(retrieved_nodes)}")
-        # level 2 retreival
-        retriever = VectorIndexRetriever(
-            index=self.rag_index,
-            node_ids=[node.node_id for node in retrieved_nodes],
-            similarity_top_k=2,
-        )
 
-        retrieved_nodes = retriever.retrieve(query_text)
+        # ------- level 2 retreival
+        retrieved_nodes = [
+            node_with_score
+            for node_with_score in retrieved_nodes
+            if node_with_score.score > 0.75
+        ]
+
         logger.debug(
             f"number of retrieved_nodes after 2nd retreival: {len(retrieved_nodes)}"
         )
         logger.debug(f"page_nums: {get_pages(retrieved_nodes)}")
 
+        # -------- level 3 retreival
+        # if number of nodes more than 5 just use the top 5
+        if len(retrieved_nodes) > 5:
+            retrieved_nodes = retrieved_nodes[:5]
+
         # # configure response synthesizer
-        # response_synthesizer = get_response_synthesizer()
+        response_synthesizer = get_response_synthesizer(
+            response_mode="compact_accumulate"
+        )
 
         # construct index to query using retreived nodes
-        query_index = VectorStoreIndex(
-            nodes=[node_with_score.node for node_with_score in retrieved_nodes]
+        query_index = SummaryIndex(
+            nodes=[node_with_score.node for node_with_score in retrieved_nodes],
         )
 
         # assemble query engine
         query_engine = query_index.as_query_engine(
+            response_synthesizer=response_synthesizer,
+            text_qa_template=text_qa_template,
             # streaming=True
         )
 
-        response = query_engine.query(query_text)
+        response = query_engine.query(
+            query_text,
+        )
         return response
 
 

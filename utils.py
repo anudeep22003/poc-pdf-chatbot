@@ -17,3 +17,11 @@ def metadata_for_doc_id(filename: str):
             "modelname": "CEREC SW 5",
             "manufacturer": "Dentsply Sirona",
         }
+
+
+documents_to_index = [
+    ("IFU_CEREC_Primemill.pdf", 5, 3),
+    ("IFU_Primescan_Connect.pdf", 4, 5),
+    ("OM_CEREC_SW_5.pdf", 8, 4),
+    ("IFU_Primescan_Connect_DE.pdf", 4, 5),
+]
