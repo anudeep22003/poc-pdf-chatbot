@@ -1,0 +1,27 @@
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_CEREC_Primemill.pdf
+index exists on filesystem: True
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_CEREC_Primemill.pdf
+index exists on filesystem: True
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_CEREC_Primemill.pdf
+index exists on filesystem: True
+querying rag index for --> How do I change the filter bag and HEPA filter on my device?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('63', 0.879092657745185), ('64', 0.8781952858271467), ('62', 0.8758392108766967), ('72', 0.8144680561504924), ('68', 0.8000208452677174), ('42', 0.7992011393013485), ('73', 0.7961567793643778), ('66', 0.7904249475156725), ('59', 0.7881958903359906), ('45', 0.788027981539199)]
+number of retrieved_nodes after 2nd retreival: 2
+page_nums: [('63', 0.8791493507071448), ('64', 0.8782312126819457)]
+response from query: To change the filter bag and HEPA filter on your device, follow these steps:
+
+1. Loosen the two knurled nuts on the maintenance cover.
+2. Remove the lid.
+3. Take out the filter bag from the nozzle.
+4. Unscrew the two Phillips screws on the perforated sheet inside the suction device.
+5. Remove the perforated sheet.
+6. Take out the dusty HEPA filter and insert a new HEPA filter.
+7. Put the perforated sheet back on and screw it down with the two Phillips screws.
+8. Put the filter bag back on.
+9. Put the maintenance cover on and screw it down with the two knurled nuts.
+10. After replacing the filter bag, activate the "Reset" button on the touch interface screen.
+
+Make sure not to jam the filter bag and ensure that the cap is sealed properly.
+
+sources: {'64', '63'}

@@ -1,0 +1,13 @@
+give me contact details
+{'response': "Sorry, I cannot seem to find the product you are asking about in my database.\n\nI only have the following products in my database: ['CEREC Primemill', 'Primescan Connect', 'CEREC SW 5']\n\nPlease try again. It may help to give any identifying infromation about the product for my lookup benefit.", 'product': None, 'sources': None}
+
+ ------------------------------
+
+{'response': "Sorry, I cannot seem to find the product you are asking about in my database.\n\nI only have the following products in my database: ['CEREC Primemill', 'Primescan Connect', 'CEREC SW 5']\n\nPlease try again. It may help to give any identifying infromation about the product for my lookup benefit.", 'product': None, 'sources': None}
+
+ ------------------------------
+
+{'response': 'You seem to be asking about CEREC Primemill.\n\nTo change the filter bag and HEPA filter on your device, follow these steps:\n\n1. Loosen the two knurled nuts on the maintenance cover.\n2. Remove the lid.\n3. Take out the filter bag from the nozzle.\n4. Unscrew the two Phillips screws on the perforated sheet inside the suction device.\n5. Remove the perforated sheet.\n6. Take out the dusty HEPA filter and insert a new HEPA filter.\n7. Put the perforated sheet back on and screw it down with the two Phillips screws.\n8. Put the filter bag back on.\n9. Put the maintenance cover on and screw it down with the two knurled nuts.\n10. After replacing the filter bag, activate the "Reset" button on the touch interface screen.\n\nMake sure not to jam the filter bag and ensure that the cap is sealed properly.', 'product': 'CEREC Primemill', 'sources': '64, 63'}
+
+ ------------------------------
+
