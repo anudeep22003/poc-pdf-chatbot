@@ -77,7 +77,7 @@ def get_response(query: Query) -> dict:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, port=8000)
+    uvicorn.run(app,host= '0.0.0.0', port=8000)
     # while True:
     #     query = input("Enter query: ")
     #     print(get_response(Query(query=query)))
