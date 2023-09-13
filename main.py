@@ -74,7 +74,7 @@ def get_classification(message: Message) -> Response:
     except KeyError:
         msg1 = f"Sorry, I cannot seem to find the product you are asking about in my database.\n\n"
         msg2 = f"As reference, I only have the following products in my database:\n{list(index_to_product_mapping.keys())}"
-        msg3 = f"\n\nPlease try again. It may help to give any identifying infromation about the product for my benefit."
+        msg3 = f"\n\nPlease try again. It may help to give any identifying information about the product for my benefit."
         return Response(content=f"{msg1}{msg2}{msg3}", product=None, sources=None)
 
 
@@ -128,6 +128,11 @@ def get_response(
 
     memory = memory_getter()
 
+    # one more check for if memory is a prev memory
+    # this can be done by checking if memory has the message content in its string.
+
+    #
+
     if memory is None:
         print("memory is None, hence doing classification")
         # means this is a fresh request
@@ -138,17 +143,25 @@ def get_response(
             memory_refresher()
             return response_msg
         return response_msg
-    elif message.content.lower() in ["n", "no"]:
+    elif message.content.strip().lower() in ["n", "no"]:
+        memory_refresher()
         return Response(
-            content="Sorry for getting it wrong, request you to try asking your question again.\n\n",
+            content="Sorry for getting it wrong, request you to try asking your question again.\nYou can ask the same question again with a few more contextual clues.\n",
             product=None,
             sources=None,
         )
-    elif message.content.lower() in ["", "y", "yes"]:
+    elif message.content.strip().lower() in ["", "y", "yes"]:
         # switch the message so as to reset the memory for the next call
         memory_refresher()
         # perform the rag call
         return perform_rag_call(memory)
+    else:
+        memory_refresher()
+        return Response(
+            content="Apologoes for the hiccup. Needed to reset my memory there. Now, I am ready. Please ask me again.",
+            product=None,
+            sources=None,
+        )
 
 
 class ConversationHandler:
@@ -157,12 +170,14 @@ class ConversationHandler:
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, port=8001)
+    # memory_refresher()
+    # import uvicorn
+
+    # uvicorn.run(app, port=8001)
 
     # for doc_location, start_skip, end_skip in documents_to_index:
     #     BuildRagIndex(doc_location, start_skip, end_skip)
-    # while True:
-    #     query = input("Enter query: ")
-    #     message = Message(content=query)
-    #     print(get_response(message))
+    while True:
+        query = input("Enter query: ")
+        message = Message(content=query)
+        print(get_response(message))

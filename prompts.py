@@ -10,6 +10,7 @@ You use the context below.
     "---------------------\n"
     "Given the context information answer the following question "
     "answer the question: {query_str}\n"
+    "Generate answer in markdown."
 )
 
 text_qa_template = PromptTemplate.from_template(text_qa_template_str)

@@ -40,15 +40,17 @@ class Response(BaseModel):
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/')
+
+@app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
+
 
 def _build_cors_preflight_response():
     response = make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add('Access-Control-Allow-Headers', "*")
-    response.headers.add('Access-Control-Allow-Methods', "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
     return response
 
 
@@ -95,7 +97,7 @@ def get_classification(message: Message) -> Response:
         return Response(content=f"{msg1}{msg2}{msg3}", product=None, sources=None)
 
 
-def perform_rag_call(message: Message):
+def perform_rag_call(message: Message) -> Response:
     # response query initialize
     response_query = []
     # find the appropriate index for the product
@@ -119,7 +121,7 @@ def perform_rag_call(message: Message):
         }
         logger.info(response_obj)
         logger.info(f"\n {'-'*30}\n")
-        return response_obj
+        return Response(**response_obj)
 
     b = BuildRagIndex(index_id)
     response_text, page_numbers = b.query(message.content)
@@ -134,30 +136,30 @@ def perform_rag_call(message: Message):
     }
     logger.info(response_obj)
     logger.info(f"\n {'-'*30}\n")
-    return response_obj
+    return Response(**response_obj)
 
 
 class Dict2Class(object):
-      
     def __init__(self, my_dict):
-          
         for key in my_dict:
             setattr(self, key, my_dict[key])
 
 
-@app.route('/chat', methods=['POST', 'OPTIONS'])
-def get_response() -> Response:
-    if request.method == "OPTIONS": # CORS preflight
+@app.route("/chat", methods=["POST", "OPTIONS"])
+def get_response() -> dict | Response | None:
+    if request.method == "OPTIONS":  # CORS preflight
         return _build_cors_preflight_response()
     else:
         print("Hello")
-        postData = json.loads(request.data)
-        print(postData)
-        message = Message(content=postData["content"])
-        print(message)
-#       message = Dict2Class(postData)
+        # postData = json.loads(request.data)
+        bytes_data = request.data
+        json_obj = request.get_json()
+        passed_to_message = jsonify(request.get_json())
+
+        message = Message(content=json_obj["content"])
+        #       print(postData)
+        #       message = Dict2Class(postData)
         memory = memory_getter()
-        print(memory)
 
         if memory is None:
             print("memory is None, hence doing classification")
@@ -165,25 +167,29 @@ def get_response() -> Response:
             # send a classification response
             memory_writer(message)
             response_msg = get_classification(message)
-            respObj = {"content":response_msg.content}
             if "sorry" in response_msg.content.lower():
                 memory_refresher()
-                return respObj
-            return respObj
-        elif message.content.lower() in ["n", "no"]:
-            return {
-                "content":"Sorry for getting it wrong, request you to try asking your question again.\n\n",
-                "product":None,
-                "sources":None,
-            }
-        elif message.content.lower() in ["", "y", "yes"]:
+                return response_msg
+            return response_msg
+        elif message.content.strip().lower() in ["n", "no"]:
+            memory_refresher()
+            return Response(
+                content="Sorry for getting it wrong, request you to try asking your question again.\n\n",
+                product=None,
+                sources=None,
+            )
+        elif message.content.strip().lower() in ["", "y", "yes"]:
             # switch the message so as to reset the memory for the next call
             memory_refresher()
             # perform the rag call
             return perform_rag_call(memory)
         else:
-            print("NO option")
-            return {"Status":"Failed"}
+            memory_refresher()
+            return Response(
+                content="...\nApologoes for the hiccup. Needed to reset my memory there. I am ready now. Please ask me again.",
+                product=None,
+                sources=None,
+            )
 
 
 class ConversationHandler:
@@ -192,4 +198,4 @@ class ConversationHandler:
 
 
 if __name__ == "__main__":
-    app.run(host= '0.0.0.0', port=8001)
+    app.run(host="0.0.0.0", port=8001)

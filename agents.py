@@ -4,7 +4,6 @@ from indexer import product_descriptions
 llm = OpenAI()
 
 
-
 class Agent:
     """Agent that performs an atomic action
     Inputs:
@@ -66,8 +65,14 @@ classification_agent = Agent(
     Query 7: Quadranten- und Vollkiefer-Scan?
     Product 7: IFU Primescan Connect DE
     ###
-    Query 8: {query}
-    Product 8:
+    Query 8: Dutch german
+    Product 8: IFU Primescan Connect DE
+    ###
+    Query 9: How do I do something in english?
+    Product 9: Primescan Connect
+    ###
+    Query 10: {query}
+    Product 10:
 
     """,
 )
