@@ -89,12 +89,12 @@ def get_classification(message: Message) -> Response:
     try:
         index_id = index_to_product_mapping[product_that_query_is_about]
         msg1 = f"You seem to be asking about {product_that_query_is_about}. Press enter if I got it right. \n\nIf not type `no`, and I will try asking the question again.\n\nI am fairly capable, so help me with a few contextual clues and I'll figure it out."
-        return Response(content=msg1, product=product_that_query_is_about, sources=None)
+        return {"content":msg1, "product":product_that_query_is_about, "sources":None}
     except KeyError:
         msg1 = f"Sorry, I cannot seem to find the product you are asking about in my database.\n\n"
         msg2 = f"As reference, I only have the following products in my database:\n{list(index_to_product_mapping.keys())}"
         msg3 = f"\n\nPlease try again. It may help to give any identifying infromation about the product for my benefit."
-        return Response(content=f"{msg1}{msg2}{msg3}", product=None, sources=None)
+        return {"content":f"{msg1}{msg2}{msg3}", "product":None, "sources":None}
 
 
 def perform_rag_call(message: Message) -> Response:
@@ -121,7 +121,7 @@ def perform_rag_call(message: Message) -> Response:
         }
         logger.info(response_obj)
         logger.info(f"\n {'-'*30}\n")
-        return Response(**response_obj)
+        return response_obj
 
     b = BuildRagIndex(index_id)
     response_text, page_numbers = b.query(message.content)
@@ -136,7 +136,7 @@ def perform_rag_call(message: Message) -> Response:
     }
     logger.info(response_obj)
     logger.info(f"\n {'-'*30}\n")
-    return Response(**response_obj)
+    return response_obj
 
 
 class Dict2Class(object):
@@ -157,6 +157,7 @@ def get_response() -> dict | Response | None:
         passed_to_message = jsonify(request.get_json())
 
         message = Message(content=json_obj["content"])
+        print(message)
         #       print(postData)
         #       message = Dict2Class(postData)
         memory = memory_getter()
@@ -167,17 +168,17 @@ def get_response() -> dict | Response | None:
             # send a classification response
             memory_writer(message)
             response_msg = get_classification(message)
-            if "sorry" in response_msg.content.lower():
+            if "sorry" in response_msg["content"].lower():
                 memory_refresher()
                 return response_msg
             return response_msg
         elif message.content.strip().lower() in ["n", "no"]:
             memory_refresher()
-            return Response(
-                content="Sorry for getting it wrong, request you to try asking your question again.\n\n",
-                product=None,
-                sources=None,
-            )
+            return {
+                "content":"Sorry for getting it wrong, request you to try asking your question again.\n\n",
+                "product":None,
+                "source":None,
+            }
         elif message.content.strip().lower() in ["", "y", "yes"]:
             # switch the message so as to reset the memory for the next call
             memory_refresher()
@@ -185,11 +186,11 @@ def get_response() -> dict | Response | None:
             return perform_rag_call(memory)
         else:
             memory_refresher()
-            return Response(
-                content="...\nApologoes for the hiccup. Needed to reset my memory there. I am ready now. Please ask me again.",
-                product=None,
-                sources=None,
-            )
+            return {
+                "content":"\nApologoes for the hiccup. Needed to reset my memory there. I am ready now. Please ask me again.",
+                "product":None,
+                "sources":None
+                }
 
 
 class ConversationHandler:
@@ -198,4 +199,4 @@ class ConversationHandler:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8001)
+    app.run(host="0.0.0.0", port=8000)

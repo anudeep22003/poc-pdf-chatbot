@@ -1,0 +1,20 @@
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect_DE.pdf
+index exists on filesystem: True
+querying rag index for --> How to do Occlusal scan?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('44', 0.8616154974763902), ('45', 0.8568986993014405), ('40', 0.8566803339557205), ('43', 0.8549067687207259), ('42', 0.8515768613141083), ('41', 0.8469464974367741), ('38', 0.8326934554285765), ('39', 0.8160612716734574), ('9', 0.8049310063701998), ('36', 0.8001741499862645)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('44', 0.8616154974763902), ('45', 0.8568986993014405), ('40', 0.8566803339557205), ('43', 0.8549067687207259), ('42', 0.8515768613141083), ('41', 0.8469464974367741), ('38', 0.8326934554285765), ('39', 0.8160612716734574), ('9', 0.8049310063701998), ('36', 0.8001741499862645)]
+response from query: Response 1: To perform an occlusal scan, start by positioning the scanner in the starting position on the tooth closest to the prepared tooth in the distal direction. Then, scan in the mesial direction, moving the scanner occlusally from the distal tooth over the prepared tooth to the mesial tooth. It is important to ensure that the coated sapphire disc of the scanner is at a distance of 0-20mm from the surface being measured, with the optimal distance being 2mm. The scanner should not be in contact with the teeth or the gums.
+
+sources: [40, 42, 43, 44, 45]
+checking if index exists at /Users/neel/Documents/AI/poc-pdf-chatbot/data/rag-index/IFU_Primescan_Connect_DE.pdf
+index exists on filesystem: True
+querying rag index for --> How to do Occlusal scan?
+number of retrieved_nodes after 1st retreival: 10
+page_nums: [('44', 0.8615306834576886), ('45', 0.8568296656980812), ('40', 0.8566076190455064), ('43', 0.8548038795563663), ('42', 0.8515248839986024), ('41', 0.8468667254646896), ('38', 0.8326210028476924), ('39', 0.8159996454713077), ('9', 0.8048472858051507), ('36', 0.8001112342172396)]
+number of retrieved_nodes after 2nd retreival: 10
+page_nums: [('44', 0.8615306834576886), ('45', 0.8568296656980812), ('40', 0.8566076190455064), ('43', 0.8548038795563663), ('42', 0.8515248839986024), ('41', 0.8468667254646896), ('38', 0.8326210028476924), ('39', 0.8159996454713077), ('9', 0.8048472858051507), ('36', 0.8001112342172396)]
+response from query: Response 1: To perform an occlusal scan, start by positioning the scanner in the starting position, with the scanner in occlusal view on the tooth closest to the prepared tooth in the distal direction. Then, scan in the mesial direction, moving the scanner occlusally from the distal tooth over the prepared tooth to the mesial tooth. It is important to ensure that the coated sapphire disc of the scanner is at a distance of 0-20mm from the surface being measured, with the optimal distance being 2mm. The scanner should not rest on the teeth or the gums.
+
+sources: [40, 42, 43, 44, 45]
